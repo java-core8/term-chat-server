@@ -1,5 +1,6 @@
 package ru.tcreator.serv;
 
+import ru.tcreator.clientmap.ClientMap;
 import ru.tcreator.entity.Message;
 import ru.tcreator.inerfaces.MessageEntityies;
 
@@ -7,15 +8,17 @@ import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
+    protected String nickname;
 
     public ClientHandler(Socket clSocket) throws IOException {
         super(clSocket);
+        firstConnect();
     }
 
     @Override
     public void run() {
         try {
-            writeOut(Message.getMessage("Подключился новый пользователь: " + socket.getPort()));
+            writeOut(Message.getMessage("К серверу подключился " + nickname));
             while(socket.isConnected()) {
                 MessageEntityies byClient = readIn();
                 writeOut(Message.getMessage("Вы написали серверу: " + byClient));
@@ -24,4 +27,16 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
             e.printStackTrace();
         }
     }
+
+    protected void firstConnect() throws IOException {
+        ClientMap clientMap = ClientMap.getInstance();
+
+        writeOut(Message.getMessage("Введите никнейм"));
+        MessageEntityies readNickName = readIn();
+        nickname = readNickName.toString();
+        clientMap.add(nickname, this);
+    }
+//    protected boolean isClientMapExisxts(String nickname) {
+//
+//    }
 }
