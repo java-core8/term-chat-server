@@ -12,12 +12,15 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
 
     public ClientHandler(Socket clSocket) throws IOException {
         super(clSocket);
+        System.out.println("1");
         firstConnect();
+
     }
 
     @Override
     public void run() {
         try {
+
             writeOut(Message.getMessage("К серверу подключился " + nickname));
             while(socket.isConnected()) {
                 MessageEntityies byClient = readIn();
@@ -32,9 +35,13 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
         ClientMap clientMap = ClientMap.getInstance();
 
         writeOut(Message.getMessage("Введите никнейм"));
+
         MessageEntityies readNickName = readIn();
+        System.out.println("11");
         nickname = readNickName.toString();
-        clientMap.add(nickname, this);
+        if(nickname != null) {
+            clientMap.add(nickname, this);
+        }
     }
 //    protected boolean isClientMapExisxts(String nickname) {
 //
