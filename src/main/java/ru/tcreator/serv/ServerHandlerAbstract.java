@@ -15,6 +15,12 @@ abstract class ServerHandlerAbstract {
     protected final BufferedReader in;
     protected final Socket socket;
     protected final BufferedWriter out;
+    protected boolean disconnected = Boolean.FALSE;
+
+    /**
+     * Флаг, если пользователь не ввёл никнейм. Запрещает рассылку сообщений пользователю.
+     */
+    protected boolean isNotStarted = Boolean.TRUE;
 
     /**
      * Конструктор. Инициализирует стримы in и out
@@ -69,7 +75,36 @@ abstract class ServerHandlerAbstract {
                 .getInstance()
                 .getIterator();
         while (iterator.hasNext()) {
-            iterator.next().writeOut(msg);
+            ClientHandler clientHandler = iterator.next();
+            if (!clientHandler.isNotStarted()) {
+                clientHandler.writeOut(msg);
+            }
+
         }
+    }
+
+    /**
+     * Флаг если пользователь не ввёл никнейм. Запрещает рассылку сообщений пользователю.
+     * @return
+     */
+    public boolean isNotStarted() {
+        return isNotStarted;
+    }
+
+    /**
+     * Устанавливает флаг в положение false. Разрешает рассылку пользователю.
+     */
+    protected void setStartFlag() {
+        isNotStarted = Boolean.FALSE;
+    }
+
+    protected void removeMeInBase(ClientHandler clientHandler) {
+        ClientMap clientMap = ClientMap.getInstance();
+        clientMap.remove(clientHandler);
+
+    }
+
+    protected void setDisconnected() {
+        this.disconnected = Boolean.TRUE;
     }
 }

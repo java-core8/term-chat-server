@@ -23,8 +23,8 @@ public class ClientMap {
         clientList.add(clientEntity);
     }
 
-    public boolean remove(ClientHandler clientEntity) {
-        return clientList.remove(clientEntity);
+    public void remove(ClientHandler clientEntity) {
+        clientList.remove(clientEntity);
     }
 
     public Iterator<ClientHandler> getIterator() {
