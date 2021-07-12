@@ -1,5 +1,3 @@
 package ru.tcreator.inerfaces;
 
-public interface MessageEntityies {
-
-}
+public interface MessageEntityies {}

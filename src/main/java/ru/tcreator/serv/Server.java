@@ -1,5 +1,5 @@
 package ru.tcreator.serv;
-
+import ru.tcreator.clientmap.ClientMap;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,15 +7,18 @@ import java.net.Socket;
 public class Server {
     public void run() {
         int port = 10156;
-        while(true) {
             try {
+                ClientMap clientMap = ClientMap.getInstance();
                 ServerSocket server = new ServerSocket(port);
-                Socket clientSocket = server.accept();
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
-                new Thread(clientHandler).start();
+                while(true) {
+                    Socket clientSocket = server.accept();
+                    ClientHandler clientHandler = new ClientHandler(clientSocket);
+                    new Thread(clientHandler).start();
+                    clientMap.add(clientHandler);
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+
             }
-        }
+
     }
 }

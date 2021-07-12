@@ -2,13 +2,14 @@ package ru.tcreator.clientmap;
 
 import ru.tcreator.serv.ClientHandler;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClientMap {
-    private ConcurrentHashMap<String, ClientHandler> clientMap;
+    private CopyOnWriteArrayList<ClientHandler> clientList;
     static private ClientMap thisClientInstance;
     private ClientMap() {
-        clientMap = new ConcurrentHashMap<>();
+        clientList = new CopyOnWriteArrayList<>();
     }
 
     public static ClientMap getInstance() {
@@ -18,11 +19,15 @@ public class ClientMap {
         return thisClientInstance;
     }
 
-    public void add(String key, ClientHandler value) {
-        clientMap.putIfAbsent(key, value);
+    public void add(ClientHandler clientEntity) {
+        clientList.add(clientEntity);
     }
 
-    public boolean remove(String key, ClientHandler value) {
-        return clientMap.remove(key, value);
+    public boolean remove(ClientHandler clientEntity) {
+        return clientList.remove(clientEntity);
+    }
+
+    public Iterator<ClientHandler> getIterator() {
+        return clientList.iterator();
     }
 }
