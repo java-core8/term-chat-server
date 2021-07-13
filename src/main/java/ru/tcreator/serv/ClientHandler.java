@@ -85,7 +85,6 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
                             if(byClientString.getTo().equals("all")) {
                                 sendMessageToAllUser(JSON.toJson(byClientString));
                             }
-//
                         }
                     }
 

@@ -1,7 +1,8 @@
 package ru.tcreator.enums;
 
 public enum Paths {
-    DEFAULT_SETTINGS("src/main/resources/inet_settings.properties");
+    SETTINGS("src/main/resources/inet_settings.properties"),
+    ROOT_PATH("src/main/ru/tcreator/");
 
     private final String path;
 
