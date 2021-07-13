@@ -2,7 +2,9 @@ package ru.tcreator.entity;
 
 import ru.tcreator.inerfaces.MessageEntityies;
 
-public class Message implements MessageEntityies {
+import java.io.Serializable;
+
+public class Message implements MessageEntityies, Serializable {
     protected String msg;
     private Message(String msg) {
         this.msg = msg;
