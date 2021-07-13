@@ -1,7 +1,9 @@
 package ru.tcreator.serv;
 
 import ru.tcreator.entity.Message;
-import ru.tcreator.inerfaces.MessageEntityies;
+import ru.tcreator.entity.MessageBuilder;
+import ru.tcreator.json_parser.JSON;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Objects;
@@ -28,50 +30,92 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
              * Если канал с пользователем обрывается принудительно до ввода никнейма в чате.
              */
             if(!disconnected) {
-                sendMessageToAllUser(Message.getMessage("К серверу подключился " + nickname));
+                sendMessageToAllUser(
+                    JSON.toJson(
+                        new MessageBuilder()
+                                .setFrom("server")
+                                .setMsg(nickname + " подключился к серверу")
+                                .buildMessage())
+                );
                 while(!disconnected) {
-                    MessageEntityies byClientString = readIn();
+                    Message byClientString = JSON.fromJsonMessage(readIn());
                     /**
                      * Если обрыв спровоцирован закрытием чата после ввода никнейма
                      */
-                    if (byClientString.isNull()) {
-                        sendMessageToAllUser(Message.getMessage(nickname + " отключился от сервера"));
+                    if (byClientString == null) {
+                        sendMessageToAllUser(
+                                JSON.toJson(
+                                    new MessageBuilder()
+                                        .setFrom("server")
+                                        .setMsg(nickname + " отключился от сервера")
+                                        .buildMessage())
+                            );
                         setDisconnected();
                     } else {
                         //TODO переписать блок обработки команд
                         // вот этот голимак заменить на блок
+
                         // если все проверки на прерывания пройдены включаем блок обработчика комманд на строку. Если в строке имеется команда. Её надо выполнить
                         // при этом сообщение должно быть отправлено
-                        if(byClientString.toString().trim().equals("/exit")) {
-                            sendMessageToAllUser(Message.getMessage(nickname + " отключился от сервера"));
-                            setDisconnected();
+                        if( byClientString.isCommand()) {
+                            if (byClientString.getCommand().equals("exit")) {
+                                // TODO прописать обработчик команд нормальный ( паттерн команда подойдёт)
+                                // а то это позор
+                                if(byClientString.getMsg() != null) {
+                                    sendMessageToAllUser(
+                                            JSON.toJson(
+                                                    new MessageBuilder()
+                                                            .setFrom(nickname)
+                                                            .setMsg(byClientString.getFrom() + " отключился от сервера")
+                                                            .buildMessage())
+                                    );
+                                }
+
+                                sendMessageToAllUser(
+                                    JSON.toJson(
+                                        new MessageBuilder()
+                                            .setFrom("server")
+                                            .setMsg(byClientString.getFrom() + " отключился от сервера")
+                                            .buildMessage())
+                                );
+                                setDisconnected();
+                            }
+
                         } else {
-                            sendMessageToAllUser(Message.getMessage(nickname + ": " + byClientString));
+                            if(byClientString.getTo().equals("all")) {
+                                sendMessageToAllUser(JSON.toJson(byClientString));
+                            }
+//
                         }
                     }
 
                 }
                 /**
-                 * обрыв соединения удаление из спискаПользователей {@link ClientMap}
+                 * обрыв соединения, удаление из спискаПользователей {@link ClientMap}
                  */
                 close();
                 removeMeInBase(this);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     protected void firstConnect() throws IOException {
-        writeOut(Message.getMessage("Введите никнейм"));
-        MessageEntityies readNickName = readIn();
-        if(readNickName.toString() == null) {
+        Message builder = new MessageBuilder()
+                .setFrom("server")
+                .setMsg("Введите никнейм чтобы продолжить!")
+                .setTo("private")
+                .buildMessage();
+
+        writeOut(JSON.toJson(builder));
+        String readString = readIn();
+        Message readNickName = JSON.fromJsonMessage(readString);
+        if(readNickName == null) {
             setDisconnected();
         }
-        nickname = readNickName.toString();
+        nickname = readNickName.getFrom();
         setStartFlag();
-
     }
 
     @Override

@@ -3,6 +3,7 @@ package ru.tcreator.serv;
 import ru.tcreator.clientmap.ClientMap;
 import ru.tcreator.entity.Message;
 import ru.tcreator.inerfaces.MessageEntityies;
+import ru.tcreator.json_parser.JSON;
 
 import java.io.*;
 import java.net.Socket;
@@ -49,7 +50,7 @@ abstract class ServerHandlerAbstract {
      * @param msg объект сообщения {@link MessageEntityies}
      * @throws IOException
      */
-    protected void writeOut(MessageEntityies msg) throws IOException {
+    protected void writeOut(String msg) throws IOException {
         out.write(msg + "\n");
         out.flush();
     }
@@ -59,10 +60,8 @@ abstract class ServerHandlerAbstract {
      * @return Message
      * @throws IOException
      */
-    protected MessageEntityies readIn() throws IOException {
-        return Message.getMessage(
-                in.readLine()
-        );
+    protected String readIn() throws IOException {
+        return in.readLine();
     }
 
     /**
@@ -70,7 +69,7 @@ abstract class ServerHandlerAbstract {
      * @param msg
      * @throws IOException
      */
-    protected void sendMessageToAllUser(MessageEntityies msg) throws IOException {
+    protected void sendMessageToAllUser(String msg) throws IOException {
         Iterator<ClientHandler> iterator = ClientMap
                 .getInstance()
                 .getIterator();
