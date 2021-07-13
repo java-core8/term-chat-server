@@ -24,14 +24,24 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
     public void run() {
         try {
             firstConnect();
+            /**
+             * Если канал с пользователем обрывается принудительно до ввода никнейма в чате.
+             */
             if(!disconnected) {
                 sendMessageToAllUser(Message.getMessage("К серверу подключился " + nickname));
                 while(!disconnected) {
                     MessageEntityies byClientString = readIn();
+                    /**
+                     * Если обрыв спровоцирован закрытием чата после ввода никнейма
+                     */
                     if (byClientString.isNull()) {
                         sendMessageToAllUser(Message.getMessage(nickname + " отключился от сервера"));
                         setDisconnected();
                     } else {
+                        //TODO переписать блок обработки команд
+                        // вот этот голимак заменить на блок
+                        // если все проверки на прерывания пройдены включаем блок обработчика комманд на строку. Если в строке имеется команда. Её надо выполнить
+                        // при этом сообщение должно быть отправлено
                         if(byClientString.toString().trim().equals("/exit")) {
                             sendMessageToAllUser(Message.getMessage(nickname + " отключился от сервера"));
                             setDisconnected();
@@ -41,6 +51,9 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
                     }
 
                 }
+                /**
+                 * обрыв соединения удаление из спискаПользователей {@link ClientMap}
+                 */
                 close();
                 removeMeInBase(this);
             }
@@ -54,8 +67,6 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
         writeOut(Message.getMessage("Введите никнейм"));
         MessageEntityies readNickName = readIn();
         if(readNickName.toString() == null) {
-            close();
-            removeMeInBase(this);
             setDisconnected();
         }
         nickname = readNickName.toString();

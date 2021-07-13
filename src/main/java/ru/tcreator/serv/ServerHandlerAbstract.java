@@ -98,12 +98,18 @@ abstract class ServerHandlerAbstract {
         isNotStarted = Boolean.FALSE;
     }
 
+    /**
+     * удаляет экземпляр из базы пользователей {@link ClientMap}
+     * @param clientHandler текущий обработчик поток с пользователем через сокет
+     */
     protected void removeMeInBase(ClientHandler clientHandler) {
         ClientMap clientMap = ClientMap.getInstance();
         clientMap.remove(clientHandler);
-
     }
 
+    /**
+     * поднимает флаг disconected в true. Метка прерывания потоков сервера
+     */
     protected void setDisconnected() {
         this.disconnected = Boolean.TRUE;
     }
