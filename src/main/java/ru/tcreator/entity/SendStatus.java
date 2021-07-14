@@ -1,6 +1,6 @@
 package ru.tcreator.entity;
 
-enum SendStatus {
+public enum SendStatus {
     GOOD("alright"),
     BAD("bad request"),
     GAP("only gap message"),

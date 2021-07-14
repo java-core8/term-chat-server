@@ -38,7 +38,7 @@ abstract class ServerHandlerAbstract {
      * Закрывает соединения стримов и сокета
      * @throws IOException
      */
-    protected void close() throws IOException {
+    public void close() throws IOException {
         in.close();
         out.close();
         socket.close();
@@ -50,7 +50,7 @@ abstract class ServerHandlerAbstract {
      * @param msg объект сообщения {@link MessageEntityies}
      * @throws IOException
      */
-    protected void writeOut(String msg) throws IOException {
+    public void writeOut(String msg) throws IOException {
         out.write(msg + "\n");
         out.flush();
     }
@@ -60,16 +60,17 @@ abstract class ServerHandlerAbstract {
      * @return Message
      * @throws IOException
      */
-    protected String readIn() throws IOException {
+    public String readIn() throws IOException {
         return in.readLine();
     }
 
     /**
      * Пишет в потоки всем пользователям в списке подключенных пользователей
+     * игнорирует пользоваетелей на этапе ввода ника
      * @param msg
      * @throws IOException
      */
-    protected void sendMessageToAllUser(String msg) throws IOException {
+    public void sendMessageToAllUser(String msg) throws IOException {
         Iterator<ClientHandler> iterator = ClientMap
                 .getInstance()
                 .getIterator();
@@ -106,10 +107,31 @@ abstract class ServerHandlerAbstract {
         clientMap.remove(clientHandler);
     }
 
+
+    /**
+     * Отсылает строку конкретному пользователю, дублирует себе в чат
+     * @param user пользователь, кому доставить сообщение {@link String}
+     * @param msg JSON сообщение {@link String}
+     * @throws IOException
+     */
+    public void sendToUser(String user, String msg) throws IOException {
+        Iterator<ClientHandler> iterator = ClientMap
+                .getInstance()
+                .getIterator();
+        while (iterator.hasNext()) {
+            ClientHandler clientHandler = iterator.next();
+            if (clientHandler.nickname.equals(user)) {
+                clientHandler.writeOut(msg);
+                break;
+            }
+
+        }
+    }
+
     /**
      * поднимает флаг disconected в true. Метка прерывания потоков сервера
      */
-    protected void setDisconnected() {
+    public void setDisconnected() {
         this.disconnected = Boolean.TRUE;
     }
 }

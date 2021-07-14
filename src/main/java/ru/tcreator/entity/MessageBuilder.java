@@ -5,6 +5,8 @@ package ru.tcreator.entity;
 //класс сам много генерирует
 
 
+import ru.tcreator.enums.Name;
+
 public class MessageBuilder {
     protected String msg;
     protected String time;
@@ -41,6 +43,11 @@ public class MessageBuilder {
         return this;
     }
 
+    public MessageBuilder setFrom(Name name) {
+        this.from = name.getName();
+        return this;
+    }
+
     public MessageBuilder setTo(String to) {
         this.to = to;
         return this;
@@ -61,8 +68,14 @@ public class MessageBuilder {
         return this;
     }
 
+
+
     public Message buildMessage() {
         if(from != null && msg != null) {
+
+            if(command != null && status != null) {
+                return new Message(msg, from, command, status);
+            }
             if(to != null) {
                 return new Message(msg, from, to);
             }
