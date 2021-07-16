@@ -5,16 +5,16 @@ import ru.tcreator.serv.ClientHandler;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ClientMap {
+public class ClientList {
     private CopyOnWriteArrayList<ClientHandler> clientList;
-    static private ClientMap thisClientInstance;
-    private ClientMap() {
+    static private ClientList thisClientInstance;
+    private ClientList() {
         clientList = new CopyOnWriteArrayList<>();
     }
 
-    public static ClientMap getInstance() {
+    public static ClientList getInstance() {
         if(thisClientInstance == null) {
-            thisClientInstance = new ClientMap();
+            thisClientInstance = new ClientList();
         }
         return thisClientInstance;
     }

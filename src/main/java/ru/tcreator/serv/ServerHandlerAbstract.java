@@ -1,9 +1,7 @@
 package ru.tcreator.serv;
 
-import ru.tcreator.clientmap.ClientMap;
-import ru.tcreator.entity.Message;
+import ru.tcreator.clientmap.ClientList;
 import ru.tcreator.inerfaces.MessageEntityies;
-import ru.tcreator.json_parser.JSON;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,11 +15,6 @@ abstract class ServerHandlerAbstract {
     protected final Socket socket;
     protected final BufferedWriter out;
     protected boolean disconnected = Boolean.FALSE;
-
-    /**
-     * Флаг, если пользователь не ввёл никнейм. Запрещает рассылку сообщений пользователю.
-     */
-    protected boolean isNotStarted = Boolean.TRUE;
 
     /**
      * Конструктор. Инициализирует стримы in и out
@@ -43,7 +36,6 @@ abstract class ServerHandlerAbstract {
         out.close();
         socket.close();
     }
-
 
     /**
      * Отсылает сообщение для текущего соединения
@@ -71,40 +63,24 @@ abstract class ServerHandlerAbstract {
      * @throws IOException
      */
     public void sendMessageToAllUser(String msg) throws IOException {
-        Iterator<ClientHandler> iterator = ClientMap
+        Iterator<ClientHandler> iterator = ClientList
                 .getInstance()
                 .getIterator();
         while (iterator.hasNext()) {
             ClientHandler clientHandler = iterator.next();
-            if (!clientHandler.isNotStarted()) {
+            if(!disconnected) {
                 clientHandler.writeOut(msg);
             }
-
         }
     }
 
     /**
-     * Флаг если пользователь не ввёл никнейм. Запрещает рассылку сообщений пользователю.
-     * @return
-     */
-    public boolean isNotStarted() {
-        return isNotStarted;
-    }
-
-    /**
-     * Устанавливает флаг в положение false. Разрешает рассылку пользователю.
-     */
-    protected void setStartFlag() {
-        isNotStarted = Boolean.FALSE;
-    }
-
-    /**
-     * удаляет экземпляр из базы пользователей {@link ClientMap}
+     * удаляет экземпляр из базы пользователей {@link ClientList}
      * @param clientHandler текущий обработчик поток с пользователем через сокет
      */
-    protected void removeMeInBase(ClientHandler clientHandler) {
-        ClientMap clientMap = ClientMap.getInstance();
-        clientMap.remove(clientHandler);
+    public void removeMeInBase(ClientHandler clientHandler) {
+        ClientList clientList = ClientList.getInstance();
+        clientList.remove(clientHandler);
     }
 
 
@@ -115,7 +91,7 @@ abstract class ServerHandlerAbstract {
      * @throws IOException
      */
     public void sendToUser(String user, String msg) throws IOException {
-        Iterator<ClientHandler> iterator = ClientMap
+        Iterator<ClientHandler> iterator = ClientList
                 .getInstance()
                 .getIterator();
         while (iterator.hasNext()) {
@@ -129,9 +105,12 @@ abstract class ServerHandlerAbstract {
     }
 
     /**
-     * поднимает флаг disconected в true. Метка прерывания потоков сервера
+     * поднимает флаг disconected в true. Метка прерывания потоков сокета клиента
      */
     public void setDisconnected() {
         this.disconnected = Boolean.TRUE;
     }
+
+
+
 }

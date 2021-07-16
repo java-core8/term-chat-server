@@ -22,31 +22,29 @@ public class Exit implements CommandExecute {
         Message msg = processData.getMessage();
         ClientHandler clh = processData.getClientHandler();
 
-
         if(msg.getCommand().equals("exit")) {
-
+            String logOffToAll = JSON.toJson(
+                    new MessageBuilder()
+                            .setFrom(Name.SERVER.getName())
+                            .setMsg(msg.getFrom() + " " + ServAnswer.CHAT_OFF.getAnsver())
+                            .buildMessage());
             // Если команда была в строке сообщения, сообщение нужно доставить.
             if(msg.getMsg() != null) {
                 clh.sendMessageToAllUser(
                     JSON.toJson(
                         new MessageBuilder()
-                            .setFrom(msg.getTo())
+                            .setFrom(msg.getFrom())
                             .setMsg(msg.getMsg())
                             .buildMessage())
                 );
+                // Говорим всем, что пользователь вышел.
+                clh.sendMessageToAllUser(logOffToAll);
+            } else {
+                clh.sendMessageToAllUser(logOffToAll);
             }
-
-            // Говорим всем, что пользователь вышел.
-            clh.sendMessageToAllUser(
-                JSON.toJson(
-                    new MessageBuilder()
-                        .setFrom(Name.SERVER.getName())
-                        .setMsg(Name.SERVER.getName() + " " + ServAnswer.CHAT_OFF.getAnsver())
-                        .buildMessage())
-            );
-
-            // ставим дисконект
             clh.setDisconnected();
+            clh.close();
+            clh.removeMeInBase(clh);
         }
     }
 }

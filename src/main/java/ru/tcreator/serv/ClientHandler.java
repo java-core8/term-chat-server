@@ -4,6 +4,9 @@ import ru.tcreator.command.CommandObserver;
 import ru.tcreator.command.ProcessData;
 import ru.tcreator.entity.Message;
 import ru.tcreator.entity.MessageBuilder;
+import ru.tcreator.enums.Name;
+import ru.tcreator.enums.SendStatus;
+import ru.tcreator.enums.ServAnswer;
 import ru.tcreator.json_parser.JSON;
 
 import java.io.*;
@@ -18,8 +21,6 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
     public ClientHandler(Socket clSocket) throws IOException {
         super(clSocket);
 
-        // устанавливаем дефолтное значение для сравнения объекта,
-        // если никнейм ещё не назначен, а пользватель закрыл чат.
         code = System.currentTimeMillis();
         nickname = String.valueOf(code);
     }
@@ -28,78 +29,50 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
     public void run() {
         try {
             CommandObserver commandObserver = new CommandObserver();
+            String readString = readIn();
+            Message clientResponse = JSON.fromJsonMessage(readString);
+            //устанавливаем ник для поиска при рассылке сообщений пользователю через оманду to
+            nickname = clientResponse.getFrom();
+            sendMessageToAllUser(
+                JSON.toJson(
+                    new MessageBuilder()
+                            .setFrom(Name.SERVER.getName())
+                            .setMsg(nickname + " " + ServAnswer.CHAT_ON.getAnsver())
+                            .buildMessage())
+            );
 
-            nicknameRequest();
-            /**
-             * Если канал с пользователем обрывается принудительно до ввода никнейма в чате.
-             * не заходим в обработчик
-             */
-            if(!disconnected) {
-                sendMessageToAllUser(
-                    JSON.toJson(
-                        new MessageBuilder()
-                                .setFrom("server")
-                                .setMsg(nickname + " подключился к серверу")
-                                .buildMessage())
-                );
+            while(!disconnected) {
+                String byClientString = readIn();
+                System.out.println(byClientString);
+                Message msg = JSON.fromJsonMessage(byClientString);
+                ProcessData processData = new ProcessData(this, msg);
+                /**
+                 * Если обрыв спровоцирован закрытием чата
+                 */
+                if (byClientString == null) {
+                    Message errMessage = new MessageBuilder()
+                            .setCommand("exit")
+                            .setFrom(nickname)
+                            .buildMessage();
+                    ProcessData errData = new ProcessData(this, errMessage);
+                    commandObserver.processCommand(errData);
 
-                while(!disconnected) {
-                    Message byClientString = JSON.fromJsonMessage(readIn());
-                    ProcessData processData = new ProcessData(this, byClientString);
-                    /**
-                     * Если обрыв спровоцирован закрытием чата после ввода никнейма
-                     */
-                    if (byClientString == null) {
-                        Message errMessage = new MessageBuilder()
-                                .setCommand("exit")
-                                .setMsg(" ")
-                                .setFrom("")
-                                .setTo("")
-                                .buildMessage();
-                        ProcessData errData = new ProcessData(this, errMessage);
-
-                        commandObserver.processCommand(errData);
+                } else {
+                    // если все проверки на прерывания пройдены включаем блок обработчика комманд на строку.
+                    if(msg.isCommand()) {
+                        commandObserver.processCommand(processData);
                     } else {
-                        // если все проверки на прерывания пройдены включаем блок обработчика комманд на строку. Если в строке имеется команда. Её надо выполнить
-                        // при этом сообщение должно быть отправлено
-                        if(byClientString.isCommand()) {
-                            commandObserver.processCommand(processData);
-                        } else {
-                          sendMessageToAllUser(JSON.toJson(byClientString));
-                        }
+                        sendMessageToAllUser(JSON.toJson(msg));
                     }
                 }
-                /**
-                 * обрыв соединения, удаление из спискаПользователей {@link ClientMap}
-                 */
-                close();
-                removeMeInBase(this);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-
-    // TODO переписать момент приветсвия на сторону клиента. Получается очень странная туфта.
-    // Первый щапрос должен быть с ником
-
-    protected void nicknameRequest() throws IOException {
-        Message builder = new MessageBuilder()
-                .setFrom("server")
-                .setMsg("Введите никнейм чтобы продолжить!")
-                .setTo("private")
-                .buildMessage();
-
-        writeOut(JSON.toJson(builder));
-        String readString = readIn();
-        Message readNickName = JSON.fromJsonMessage(readString);
-        if(readNickName == null) {
-            setDisconnected();
-        }
-        nickname = readNickName.getFrom();
-        setStartFlag();
+    public String getNickname() {
+        return nickname;
     }
 
     @Override

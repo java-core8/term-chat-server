@@ -2,7 +2,8 @@ package ru.tcreator.enums;
 
 public enum ServAnswer {
 
-    CHAT_OFF("вышел из чата");
+    CHAT_OFF("вышел из чата"),
+    CHAT_ON("подключился к чату");
 
     String name;
 

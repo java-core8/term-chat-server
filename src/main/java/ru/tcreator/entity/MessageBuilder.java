@@ -1,40 +1,17 @@
 package ru.tcreator.entity;
 
-
-//TODO некоторые поля лишние, снести как будет время
-//класс сам много генерирует
-
-
 import ru.tcreator.enums.Name;
 
 public class MessageBuilder {
     protected String msg;
-    protected String time;
-    protected long timeStamp;
-    protected String formatTime = "hh:mm:ss a";
     protected String from;
-    protected String to = "all";
-    protected boolean isCommand = Boolean.FALSE;
     protected String command;
-    protected SendStatus status;
+    protected String to;
+    protected String parameter;
 
     public MessageBuilder setMsg(String msg) {
-        String trimMessage = msg.trim() + "1";
-        if(trimMessage.length() == 1) {
-            status = SendStatus.GAP;
-        } else {
-            this.msg = msg.trim();
-        }
-        return this;
-    }
+        this.msg = msg.trim();
 
-    public MessageBuilder setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
-        return this;
-    }
-
-    public MessageBuilder setFormatTime(String formatTime) {
-        this.formatTime = formatTime;
         return this;
     }
 
@@ -53,33 +30,28 @@ public class MessageBuilder {
         return this;
     }
 
-    public MessageBuilder setCommand(boolean command) {
-        isCommand = command;
-        return this;
-    }
-
     public MessageBuilder setCommand(String command) {
         this.command = command;
         return this;
     }
 
-    public MessageBuilder setStatus(SendStatus status) {
-        this.status = status;
+    public MessageBuilder setParameter(String parameter) {
+        this.parameter = parameter;
         return this;
     }
 
-
-
     public Message buildMessage() {
         if(from != null && msg != null) {
-
-            if(command != null && status != null) {
-                return new Message(msg, from, command, status);
-            }
             if(to != null) {
                 return new Message(msg, from, to);
             }
+            if(command != null) {
+                return new Message(msg, from, command, parameter);
+            }
             return new Message(msg, from);
+        }
+        if(command != null) {
+            return new Message(null, null, command, parameter);
         }
 
         return null;

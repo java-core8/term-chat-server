@@ -1,5 +1,5 @@
 package ru.tcreator.serv;
-import ru.tcreator.clientmap.ClientMap;
+import ru.tcreator.clientmap.ClientList;
 import ru.tcreator.enums.Paths;
 import ru.tcreator.settings.Settings;
 
@@ -13,13 +13,13 @@ public class Server {
             Settings settings = new Settings(Paths.SETTINGS.getPath());
             final int PORT = Integer.parseInt(settings.getProperties("PORT"));
 
-            ClientMap clientMap = ClientMap.getInstance();
+            ClientList clientList = ClientList.getInstance();
             ServerSocket server = new ServerSocket(PORT);
             while(true) {
                 Socket clientSocket = server.accept();
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 new Thread(clientHandler).start();
-                clientMap.add(clientHandler);
+                clientList.add(clientHandler);
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());

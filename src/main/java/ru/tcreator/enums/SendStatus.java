@@ -1,4 +1,4 @@
-package ru.tcreator.entity;
+package ru.tcreator.enums;
 
 public enum SendStatus {
     GOOD("alright"),
@@ -12,7 +12,7 @@ public enum SendStatus {
         statusMsg = status;
     }
 
-    String getMessage() {
+    public String getMessage() {
         return statusMsg;
     }
 }
