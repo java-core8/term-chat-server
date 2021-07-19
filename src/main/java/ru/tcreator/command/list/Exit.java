@@ -23,7 +23,7 @@ public class Exit implements CommandExecute {
         ClientHandler clh = processData.getClientHandler();
 
         if(msg.getCommand().equals("exit")) {
-            String logOffToAll = JSON.toJson(
+            String logOffToAll = JSON.toJsonMessage(
                     new MessageBuilder()
                             .setFrom(Name.SERVER.getName())
                             .setMsg(msg.getFrom() + " " + ServAnswer.CHAT_OFF.getAnsver())
@@ -31,7 +31,7 @@ public class Exit implements CommandExecute {
             // Если команда была в строке сообщения, сообщение нужно доставить.
             if(msg.getMsg() != null) {
                 clh.sendMessageToAllUser(
-                    JSON.toJson(
+                    JSON.toJsonMessage(
                         new MessageBuilder()
                             .setFrom(msg.getFrom())
                             .setMsg(msg.getMsg())

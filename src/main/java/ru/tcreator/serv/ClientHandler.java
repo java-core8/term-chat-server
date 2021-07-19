@@ -5,7 +5,6 @@ import ru.tcreator.command.ProcessData;
 import ru.tcreator.entity.Message;
 import ru.tcreator.entity.MessageBuilder;
 import ru.tcreator.enums.Name;
-import ru.tcreator.enums.SendStatus;
 import ru.tcreator.enums.ServAnswer;
 import ru.tcreator.json_parser.JSON;
 
@@ -34,7 +33,7 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
             //устанавливаем ник для поиска при рассылке сообщений пользователю через оманду to
             nickname = clientResponse.getFrom();
             sendMessageToAllUser(
-                JSON.toJson(
+                JSON.toJsonMessage(
                     new MessageBuilder()
                             .setFrom(Name.SERVER.getName())
                             .setMsg(nickname + " " + ServAnswer.CHAT_ON.getAnsver())
@@ -62,7 +61,7 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
                     if(msg.isCommand()) {
                         commandObserver.processCommand(processData);
                     } else {
-                        sendMessageToAllUser(JSON.toJson(msg));
+                        sendMessageToAllUser(JSON.toJsonMessage(msg));
                     }
                 }
             }

@@ -1,11 +1,10 @@
 package ru.tcreator.entity;
 
-import ru.tcreator.inerfaces.MessageEntityies;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Message implements MessageEntityies {
+public class Message {
     protected String msg;
     protected String time;
     protected long timeStamp;

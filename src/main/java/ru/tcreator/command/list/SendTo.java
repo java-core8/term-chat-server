@@ -21,7 +21,7 @@ public class SendTo implements CommandExecute {
                     .setTo(Name.PRIVATE.getName())
                     .setFrom(msg.getFrom())
                     .buildMessage();
-            clh.sendToUser(msg.getParameter(), JSON.toJson(newMessageToPrivate));
+            clh.sendToUser(msg.getParameter(), JSON.toJsonMessage(newMessageToPrivate));
         }
     }
 }

@@ -33,7 +33,7 @@ public class ListUser implements CommandExecute {
                     .setFrom(Name.SERVER)
                     .buildMessage();
 
-            clh.sendToUser(msg.getFrom(), JSON.toJson(newMessageWithListUser));
+            clh.sendToUser(msg.getFrom(), JSON.toJsonMessage(newMessageWithListUser));
         }
     }
 }

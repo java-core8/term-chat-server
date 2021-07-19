@@ -1,7 +1,6 @@
 package ru.tcreator.serv;
 
 import ru.tcreator.clientmap.ClientList;
-import ru.tcreator.inerfaces.MessageEntityies;
 
 import java.io.*;
 import java.net.Socket;
