@@ -56,6 +56,7 @@ public class Message {
         }
         return toMessagePattern + " " + from + " " + time + ": " + msg;
     }
+
     public String getFrom() {
         return from;
     }

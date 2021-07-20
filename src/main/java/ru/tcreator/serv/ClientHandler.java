@@ -42,6 +42,7 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
 
             while(!disconnected) {
                 String byClientString = readIn();
+                System.out.println(nickname);
                 System.out.println(byClientString);
                 Message msg = JSON.fromJsonMessage(byClientString);
                 ProcessData processData = new ProcessData(this, msg);
@@ -62,6 +63,7 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
                         commandObserver.processCommand(processData);
                     } else {
                         sendMessageToAllUser(JSON.toJsonMessage(msg));
+                        JSON.addMessageFile(msg);
                     }
                 }
             }

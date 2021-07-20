@@ -1,8 +1,6 @@
 package ru.tcreator.command;
 
-import ru.tcreator.command.list.Exit;
-import ru.tcreator.command.list.ListUser;
-import ru.tcreator.command.list.SendTo;
+import ru.tcreator.command.list.*;
 import ru.tcreator.inerfaces.CommandExecute;
 import ru.tcreator.serv.ClientHandler;
 
@@ -15,7 +13,9 @@ public class CommandObserver {
     final protected List<CommandExecute> commandList = Arrays.asList(
             (executive -> new Exit().execute(executive)),
             (executive -> new SendTo().execute(executive)),
-            (executive -> new ListUser().execute(executive))
+            (executive -> new ListUser().execute(executive)),
+            (executive -> new History().execute(executive)),
+            (executive -> new Help().execute(executive))
     );
 
     public void processCommand(ProcessData data) throws IOException {

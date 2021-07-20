@@ -22,9 +22,13 @@ public class ListUser implements CommandExecute {
             Iterator<ClientHandler> iterator = ClientList
                     .getInstance()
                     .getIterator();
+            int i = 1;
             while (iterator.hasNext()) {
                 ClientHandler clientHandler = iterator.next();
-                nicknameList.append(clientHandler.getNickname()).append("\n");
+                nicknameList.append(i++)
+                        .append(") ")
+                        .append(clientHandler.getNickname())
+                        .append("\n");
             }
 
             Message newMessageWithListUser = new MessageBuilder()

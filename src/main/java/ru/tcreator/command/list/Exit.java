@@ -30,15 +30,15 @@ public class Exit implements CommandExecute {
                             .buildMessage());
             // Если команда была в строке сообщения, сообщение нужно доставить.
             if(msg.getMsg() != null) {
-                clh.sendMessageToAllUser(
-                    JSON.toJsonMessage(
-                        new MessageBuilder()
-                            .setFrom(msg.getFrom())
-                            .setMsg(msg.getMsg())
-                            .buildMessage())
-                );
+                Message allTo = new MessageBuilder()
+                        .setFrom(msg.getFrom())
+                        .setMsg(msg.getMsg())
+                        .buildMessage();
+                clh.sendMessageToAllUser(JSON.toJsonMessage(allTo));
                 // Говорим всем, что пользователь вышел.
                 clh.sendMessageToAllUser(logOffToAll);
+                // Пишем сообщение пользователя в файл лога
+                JSON.addMessageFile(allTo);
             } else {
                 clh.sendMessageToAllUser(logOffToAll);
             }

@@ -1,9 +1,9 @@
 package ru.tcreator.enums;
 
 public enum Name {
-    SERVER("server"),
-    PRIVATE("private"),
-    ALL("всем");
+    SERVER("SERVER"),
+    PRIVATE("PRIVATE"),
+    ALL("ALL");
 
     String name;
 
