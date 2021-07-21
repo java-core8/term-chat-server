@@ -6,10 +6,12 @@ import ru.tcreator.entity.MessageBuilder;
 import ru.tcreator.enums.Name;
 import ru.tcreator.inerfaces.CommandExecute;
 import ru.tcreator.json_parser.JSON;
+import ru.tcreator.log.Log;
 import ru.tcreator.serv.ClientHandler;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 
 public class History implements CommandExecute {
     @Override
@@ -17,6 +19,9 @@ public class History implements CommandExecute {
         Message msg = processData.getMessage();
         ClientHandler clh = processData.getClientHandler();
         if(msg.getCommand().equals("history")) {
+            //лог
+            Log.toLog(History.class, Level.INFO, "запущена команда "
+                    + msg.getCommand().equals("history"));
             try {
                 int parameter = Integer.parseInt(msg.getParameter());
 
@@ -41,7 +46,7 @@ public class History implements CommandExecute {
 
                 clh.sendToUser(msg.getFrom(), JSON.toJsonMessage(newMessageWithListUser));
             } catch (NumberFormatException e) {
-                System.out.println(e.getMessage());
+                Log.logTrow(History.class, "execute", e);
             }
 
         }

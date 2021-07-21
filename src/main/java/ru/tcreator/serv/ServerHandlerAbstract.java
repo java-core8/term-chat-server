@@ -100,7 +100,6 @@ abstract class ServerHandlerAbstract {
                 clientHandler.writeOut(msg);
                 break;
             }
-
         }
     }
 

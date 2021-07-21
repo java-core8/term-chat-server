@@ -1,5 +1,6 @@
 package ru.tcreator.serv;
 
+import ru.tcreator.Start;
 import ru.tcreator.command.CommandObserver;
 import ru.tcreator.command.ProcessData;
 import ru.tcreator.entity.Message;
@@ -7,10 +8,12 @@ import ru.tcreator.entity.MessageBuilder;
 import ru.tcreator.enums.Name;
 import ru.tcreator.enums.ServAnswer;
 import ru.tcreator.json_parser.JSON;
+import ru.tcreator.log.Log;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.Objects;
+import java.util.logging.Level;
 
 public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
     protected String nickname;
@@ -30,8 +33,12 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
             CommandObserver commandObserver = new CommandObserver();
             String readString = readIn();
             Message clientResponse = JSON.fromJsonMessage(readString);
+
             //устанавливаем ник для поиска при рассылке сообщений пользователю через оманду to
             nickname = clientResponse.getFrom();
+            //лог
+            Log.toLog(ClientHandler.class, Level.INFO, "Установлен ник нового пользователя " + nickname);
+
             sendMessageToAllUser(
                 JSON.toJsonMessage(
                     new MessageBuilder()
@@ -50,13 +57,15 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
                  * Если обрыв спровоцирован закрытием чата
                  */
                 if (byClientString == null) {
+
                     Message errMessage = new MessageBuilder()
                             .setCommand("exit")
                             .setFrom(nickname)
                             .buildMessage();
                     ProcessData errData = new ProcessData(this, errMessage);
                     commandObserver.processCommand(errData);
-
+                    //лог
+                    Log.toLog(ClientHandler.class, Level.OFF, "Экстренный выход клиента");
                 } else {
                     // если все проверки на прерывания пройдены включаем блок обработчика комманд на строку.
                     if(msg.isCommand()) {
@@ -67,8 +76,10 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
                     }
                 }
             }
+            //лог
+            Log.toLog(ClientHandler.class, Level.INFO, "клиент закончил работу");
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.logTrow(ClientHandler.class, "run", e);
         }
     }
 
@@ -88,7 +99,5 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
     public int hashCode() {
         return Objects.hash(nickname + code);
     }
-
-
 
 }

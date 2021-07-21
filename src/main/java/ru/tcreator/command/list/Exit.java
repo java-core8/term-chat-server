@@ -7,9 +7,11 @@ import ru.tcreator.enums.Name;
 import ru.tcreator.enums.ServAnswer;
 import ru.tcreator.inerfaces.CommandExecute;
 import ru.tcreator.json_parser.JSON;
+import ru.tcreator.log.Log;
 import ru.tcreator.serv.ClientHandler;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 /**
  * Отклик на команду exit
@@ -18,33 +20,43 @@ import java.io.IOException;
  */
 public class Exit implements CommandExecute {
     @Override
-    public void execute(ProcessData processData) throws IOException {
+    public void execute(ProcessData processData) {
         Message msg = processData.getMessage();
         ClientHandler clh = processData.getClientHandler();
-
         if(msg.getCommand().equals("exit")) {
-            String logOffToAll = JSON.toJsonMessage(
-                    new MessageBuilder()
-                            .setFrom(Name.SERVER.getName())
-                            .setMsg(msg.getFrom() + " " + ServAnswer.CHAT_OFF.getAnsver())
-                            .buildMessage());
-            // Если команда была в строке сообщения, сообщение нужно доставить.
-            if(msg.getMsg() != null) {
-                Message allTo = new MessageBuilder()
-                        .setFrom(msg.getFrom())
-                        .setMsg(msg.getMsg())
-                        .buildMessage();
-                clh.sendMessageToAllUser(JSON.toJsonMessage(allTo));
-                // Говорим всем, что пользователь вышел.
-                clh.sendMessageToAllUser(logOffToAll);
-                // Пишем сообщение пользователя в файл лога
-                JSON.addMessageFile(allTo);
-            } else {
-                clh.sendMessageToAllUser(logOffToAll);
+            try {
+                // лог
+                Log.toLog(Exit.class, Level.INFO, "запущена команда "
+                        + msg.getCommand().equals("exit"));
+                String logOffToAll = JSON.toJsonMessage(
+                        new MessageBuilder()
+                                .setFrom(Name.SERVER.getName())
+                                .setMsg(msg.getFrom() + " " + ServAnswer.CHAT_OFF.getAnsver())
+                                .buildMessage());
+                // Если команда была в строке сообщения, сообщение нужно доставить.
+                if(msg.getMsg() != null) {
+                    Message allTo = new MessageBuilder()
+                            .setFrom(msg.getFrom())
+                            .setMsg(msg.getMsg())
+                            .buildMessage();
+                    clh.sendMessageToAllUser(JSON.toJsonMessage(allTo));
+                    // Говорим всем, что пользователь вышел.
+                    clh.sendMessageToAllUser(logOffToAll);
+                    // Пишем сообщение пользователя в файл истории сообщений
+                    JSON.addMessageFile(allTo);
+                } else {
+                    clh.sendMessageToAllUser(logOffToAll);
+                }
+
+                clh.setDisconnected();
+                clh.close();
+                clh.removeMeInBase(clh);
+                Log.toLog(Exit.class, Level.OFF, "команда успешно выполнена "
+                        + msg.getCommand().equals("exit"));
+            } catch (IOException e) {
+                Log.logTrow(Exit.class, "execute", e);
             }
-            clh.setDisconnected();
-            clh.close();
-            clh.removeMeInBase(clh);
+
         }
     }
 }
