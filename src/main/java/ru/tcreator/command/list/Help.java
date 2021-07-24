@@ -21,8 +21,8 @@ public class Help implements CommandExecute {
         ClientHandler clh = processData.getClientHandler();
         try {
             if (msg.getCommand().equals("help")) {
-                Log.toLog(Help.class, Level.INFO, "запущена команда "
-                        + msg.getCommand().equals("help"));
+                Log.logger.log(Level.INFO, "запущена команда "
+                        + msg.getCommand());
                 String helpString = new ReaderFile(Paths.HELP.getPath()).read();
                 Message helpMessage = new MessageBuilder()
                         .setMsg(helpString)
@@ -32,7 +32,7 @@ public class Help implements CommandExecute {
                 clh.sendToUser(msg.getFrom(), JSON.toJsonMessage(helpMessage));
             }
         } catch (IOException e) {
-            Log.logTrow(Help.class, "execute", e);
+            Log.logger.throwing(Help.class.getName(), "execute", e);
         }
     }
 }

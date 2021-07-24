@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClientList {
-    private CopyOnWriteArrayList<ClientHandler> clientList;
+    private final CopyOnWriteArrayList<ClientHandler> clientList;
     static private ClientList thisClientInstance;
     private ClientList() {
         clientList = new CopyOnWriteArrayList<>();

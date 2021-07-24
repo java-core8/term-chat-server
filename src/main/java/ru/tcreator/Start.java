@@ -8,7 +8,7 @@ public class Start {
 
 
     public static void main(String[] args) {
-        Log.toLog(Start.class, Level.INFO, "Запуск системы");
+        Log.logger.log(Level.INFO, "Запуск системы");
         try {
             Server server = new Server();
             server.run();

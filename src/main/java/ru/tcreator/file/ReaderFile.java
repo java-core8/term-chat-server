@@ -21,7 +21,7 @@ public class ReaderFile {
 
         try(FileReader reader = new FileReader(path.getPath())) {
             int symbol;
-            while((symbol=reader.read())!=-1){
+            while((symbol=reader.read())!=-1) {
                 stringBuilder.append((char) symbol);
             }
         }

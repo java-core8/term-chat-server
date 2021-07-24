@@ -26,7 +26,7 @@ public class Exit implements CommandExecute {
         if(msg.getCommand().equals("exit")) {
             try {
                 // лог
-                Log.toLog(Exit.class, Level.INFO, "запущена команда "
+                Log.logger.log(Level.INFO, "запущена команда "
                         + msg.getCommand().equals("exit"));
                 String logOffToAll = JSON.toJsonMessage(
                         new MessageBuilder()
@@ -51,10 +51,10 @@ public class Exit implements CommandExecute {
                 clh.setDisconnected();
                 clh.close();
                 clh.removeMeInBase(clh);
-                Log.toLog(Exit.class, Level.OFF, "команда успешно выполнена "
+                Log.logger.log(Level.OFF, "команда успешно выполнена "
                         + msg.getCommand().equals("exit"));
             } catch (IOException e) {
-                Log.logTrow(Exit.class, "execute", e);
+                //Log.logTrow(Exit.class, "execute", e);
             }
 
         }

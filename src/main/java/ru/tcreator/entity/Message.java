@@ -76,5 +76,6 @@ public class Message {
     public String getParameter() {
         return parameterCommand;
     }
+
 }
 

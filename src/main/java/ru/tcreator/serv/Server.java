@@ -19,14 +19,14 @@ public class Server {
             ServerSocket server = new ServerSocket(PORT);
             while(true) {
                 Socket clientSocket = server.accept();
-                Log.toLog(Server.class, Level.INFO, "подключение клиента " + clientSocket);
+                Log.logger.log(Level.INFO, "подключение клиента " + clientSocket);
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 new Thread(clientHandler).start();
                 clientList.add(clientHandler);
             }
         } catch (IOException e) {
-            Log.logTrow(Server.class, "run", e);
+            //Log.logTrow(Server.class, "run", e);
         }
 
     }
