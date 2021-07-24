@@ -20,7 +20,7 @@ public class History implements CommandExecute {
         ClientHandler clh = processData.getClientHandler();
         if(msg.getCommand().equals("history")) {
             //лог
-            Log.toLog(History.class, Level.INFO, "запущена команда "
+            Log.logger.log(Level.INFO, "запущена команда "
                     + msg.getCommand().equals("history"));
             try {
                 int parameter = Integer.parseInt(msg.getParameter());
@@ -46,7 +46,7 @@ public class History implements CommandExecute {
 
                 clh.sendToUser(msg.getFrom(), JSON.toJsonMessage(newMessageWithListUser));
             } catch (NumberFormatException e) {
-                Log.logTrow(History.class, "execute", e);
+                Log.logger.throwing(History.class.getName(), "execute", e);
             }
 
         }

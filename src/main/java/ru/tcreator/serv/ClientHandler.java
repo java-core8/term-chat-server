@@ -11,6 +11,7 @@ import ru.tcreator.json_parser.JSON;
 import ru.tcreator.log.Log;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -33,11 +34,10 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
             CommandObserver commandObserver = new CommandObserver();
             String readString = readIn();
             Message clientResponse = JSON.fromJsonMessage(readString);
-
             //устанавливаем ник для поиска при рассылке сообщений пользователю через оманду to
             nickname = clientResponse.getFrom();
             //лог
-            Log.toLog(ClientHandler.class, Level.INFO, "Установлен ник нового пользователя " + nickname);
+            Log.logger.log(Level.INFO, "Установлен ник нового пользователя " + nickname);
 
             sendMessageToAllUser(
                 JSON.toJsonMessage(
@@ -48,38 +48,42 @@ public class ClientHandler extends ServerHandlerAbstract implements Runnable  {
             );
 
             while(!disconnected) {
-                String byClientString = readIn();
-                System.out.println(nickname);
-                System.out.println(byClientString);
-                Message msg = JSON.fromJsonMessage(byClientString);
-                ProcessData processData = new ProcessData(this, msg);
-                /**
-                 * Если обрыв спровоцирован закрытием чата
-                 */
-                if (byClientString == null) {
+                try {
+                    String byClientString = readIn();
+                    System.out.println(nickname);
+                    System.out.println(byClientString);
+                    Message msg = JSON.fromJsonMessage(byClientString);
+                    ProcessData processData = new ProcessData(this, msg);
+                    /**
+                     * Если обрыв спровоцирован закрытием чата
+                     */
+                    if (byClientString == null) {
 
-                    Message errMessage = new MessageBuilder()
-                            .setCommand("exit")
-                            .setFrom(nickname)
-                            .buildMessage();
-                    ProcessData errData = new ProcessData(this, errMessage);
-                    commandObserver.processCommand(errData);
-                    //лог
-                    Log.toLog(ClientHandler.class, Level.OFF, "Экстренный выход клиента");
-                } else {
-                    // если все проверки на прерывания пройдены включаем блок обработчика комманд на строку.
-                    if(msg.isCommand()) {
-                        commandObserver.processCommand(processData);
+                        Message errMessage = new MessageBuilder()
+                                .setCommand("exit")
+                                .setFrom(nickname)
+                                .buildMessage();
+                        ProcessData errData = new ProcessData(this, errMessage);
+                        commandObserver.processCommand(errData);
+                        //лог
+                        Log.logger.log(Level.OFF, "Экстренный выход клиента");
                     } else {
-                        sendMessageToAllUser(JSON.toJsonMessage(msg));
-                        JSON.addMessageFile(msg);
+                        // если все проверки на прерывания пройдены включаем блок обработчика комманд на строку.
+                        if (msg.isCommand()) {
+                            commandObserver.processCommand(processData);
+                        } else {
+                            sendMessageToAllUser(JSON.toJsonMessage(msg));
+                            JSON.addMessageFile(msg);
+                        }
                     }
+                } catch (Exception e) {
+                  Log.logger.throwing(ClientHandler.class.getName(), "run", e);
                 }
             }
             //лог
-            Log.toLog(ClientHandler.class, Level.INFO, "клиент закончил работу");
+            Log.logger.log(Level.INFO, "клиент закончил работу");
         } catch (IOException e) {
-            Log.logTrow(ClientHandler.class, "run", e);
+            Log.logger.throwing(ClientHandler.class.getName(), "run", e);
         }
     }
 

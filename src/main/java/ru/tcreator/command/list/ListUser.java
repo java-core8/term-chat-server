@@ -22,8 +22,8 @@ public class ListUser implements CommandExecute {
         if(msg.getCommand().equals("list")) {
             try{
                 // log
-                Log.toLog(ListUser.class, Level.INFO, "запущена команда "
-                        + msg.getCommand().equals("list"));
+                Log.logger.log(Level.INFO, "запущена команда "
+                        + msg.getCommand());
                 StringBuilder nicknameList = new StringBuilder("Список участников чата:\n");
                 Iterator<ClientHandler> iterator = ClientList
                         .getInstance()
@@ -45,7 +45,7 @@ public class ListUser implements CommandExecute {
 
                 clh.sendToUser(msg.getFrom(), JSON.toJsonMessage(newMessageWithListUser));
             } catch (IOException e) {
-                Log.logTrow(ListUser.class, "execute", e);
+                Log.logger.throwing(ListUser.class.getName(), "execute", e);
             }
 
 //            new Log(Help.class).getLogger().info("Спровоцирована команда list");

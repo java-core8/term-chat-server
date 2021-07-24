@@ -20,8 +20,8 @@ public class SendTo implements CommandExecute {
         if(msg.getCommand().equals("to")) {
             try {
                 // log
-                Log.toLog(SendTo.class, Level.INFO, "запущена команда "
-                        + msg.getCommand().equals("to"));
+                Log.logger.log(Level.INFO, "запущена команда "
+                        + msg.getCommand());
 
                 Message newMessageToPrivate = new MessageBuilder()
                         .setMsg(msg.getMsg())
@@ -30,7 +30,7 @@ public class SendTo implements CommandExecute {
                         .buildMessage();
                 clh.sendToUser(msg.getParameter(), JSON.toJsonMessage(newMessageToPrivate));
             } catch (IOException e) {
-                Log.logTrow(SendTo.class, "execute", e);
+                Log.logger.throwing(SendTo.class.getName(), "execute", e);
             }
         }
     }

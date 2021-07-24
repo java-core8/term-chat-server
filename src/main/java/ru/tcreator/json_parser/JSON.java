@@ -1,15 +1,21 @@
 package ru.tcreator.json_parser;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import ru.tcreator.entity.Message;
+import ru.tcreator.entity.MessageBuilder;
+import ru.tcreator.enums.Name;
 import ru.tcreator.enums.Paths;
+import ru.tcreator.enums.ServAnswer;
+import ru.tcreator.log.Log;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.security.MessageDigest;
 import java.util.List;
 
 public class JSON {
@@ -29,7 +35,21 @@ public class JSON {
      * @return {@link Message} объект сообщения
      */
     static public Message fromJsonMessage(String json) {
-        return gson.fromJson(json, Message.class);
+        Message message;
+        try {
+            message = gson.fromJson(json, Message.class);
+        } catch (JsonSyntaxException e) {
+            message = new MessageBuilder()
+                    .setFrom(Name.SERVER.getName())
+                    .setMsg(ServAnswer.NOT_VALID_MSG.getAnsver())
+                    .setCommand("exit")
+                    .buildMessage();
+
+            Log.logger.throwing(JSON.class.getName(), "fromJsonMessage", e);
+        }
+
+        return message;
+
     }
 
     static public void addMessageFile(Message msg) {
