@@ -55,7 +55,6 @@ public class Exit implements CommandExecute {
             } catch (IOException e) {
                 Log.logger.throwing(ClientHandler.class.getName(), "run", e);
             }
-
         }
     }
 }
