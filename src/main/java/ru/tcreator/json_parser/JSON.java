@@ -15,7 +15,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
-import java.security.MessageDigest;
 import java.util.List;
 
 public class JSON {
