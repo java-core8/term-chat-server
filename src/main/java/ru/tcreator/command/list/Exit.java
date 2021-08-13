@@ -27,7 +27,7 @@ public class Exit implements CommandExecute {
             try {
                 // лог
                 Log.logger.log(Level.INFO, "запущена команда "
-                        + msg.getCommand().equals("exit"));
+                        + msg.getCommand());
                 String logOffToAll = JSON.toJsonMessage(
                         new MessageBuilder()
                                 .setFrom(Name.SERVER.getName())
@@ -39,24 +39,22 @@ public class Exit implements CommandExecute {
                             .setFrom(msg.getFrom())
                             .setMsg(msg.getMsg())
                             .buildMessage();
+                    // доставляем сообщение пользователя
                     clh.sendMessageToAllUser(JSON.toJsonMessage(allTo));
-                    // Говорим всем, что пользователь вышел.
-                    clh.sendMessageToAllUser(logOffToAll);
                     // Пишем сообщение пользователя в файл истории сообщений
                     JSON.addMessageFile(allTo);
-                } else {
-                    clh.sendMessageToAllUser(logOffToAll);
+                    // Говорим всем, что пользователь вышел.
                 }
+                clh.sendMessageToAllUser(logOffToAll);
 
                 clh.setDisconnected();
                 clh.close();
                 clh.removeMeInBase(clh);
                 Log.logger.log(Level.OFF, "команда успешно выполнена "
-                        + msg.getCommand().equals("exit"));
+                        + msg.getCommand());
             } catch (IOException e) {
-                //Log.logTrow(Exit.class, "execute", e);
+                Log.logger.throwing(ClientHandler.class.getName(), "run", e);
             }
-
         }
     }
 }

@@ -21,7 +21,7 @@ public class History implements CommandExecute {
         if(msg.getCommand().equals("history")) {
             //лог
             Log.logger.log(Level.INFO, "запущена команда "
-                    + msg.getCommand().equals("history"));
+                    + msg.getCommand());
             try {
                 int parameter = Integer.parseInt(msg.getParameter());
 
