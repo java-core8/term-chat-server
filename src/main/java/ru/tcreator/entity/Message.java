@@ -50,11 +50,11 @@ public class Message {
 
     @Override
     public String toString() {
-        String toMessagePattern = "[всем]";
+        String toMessagePattern = "[all]";
         if(!to.equals("all")) {
             toMessagePattern = "[" + to + "]";
         }
-        return toMessagePattern + " " + from + " " + time + ": " + msg;
+        return toMessagePattern + " " + from + " " + time + " >>> " + msg;
     }
 
     public String getFrom() {
